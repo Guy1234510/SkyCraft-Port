@@ -16,8 +16,7 @@ and Linking Exceptions in `EXCEPTIONS.md`. Preserve `COPYING.txt`, those excepti
 and original attribution. The historical MIT file does not replace this GPL license.
 The MIT license on SkyCraft's own source does not make the linked DLL MIT-only.
 
-Each Native112 release provides `SkyCraft-Corresponding-Source-Native112.zip` in
-the same release as the DLL. It contains the matching port source, CommonLib
+Each Native112 release provides matching source in this repository. The repository contains the matching port source, CommonLib
 build source, required OpenVR headers, hde64 source and the native library sources
 used by the release, including vcpkg patches and build recipes. Its manifest
 identifies the source commit, dependency revisions and checksums. Dependencies

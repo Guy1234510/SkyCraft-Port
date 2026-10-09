@@ -21,9 +21,9 @@
   "minhook_commit": "c3fcafdc10146beb5919319d0683e44e3c30d537",
   "sha256": {
     ".gitignore": "a3bedd5eff3cccb3daf76f3ee277ddc48c866a3623112331a89e0c7b72c347c3",
-    "DISTRIBUTION.md": "97ba0a8437944c70bc4eedf874fd257a4b8823d56c20a96026edaaaba49bacb4",
+    "DISTRIBUTION.md": "0cbf536a5aead8d2fcda543db9ed28955f469d2a97f18ed932584cec4cc8c603",
     "LICENSE": "adcf5b9966dd6f78b54bd6872d8fccfe4bd8e5d51186aa982dde7cb628087dd1",
-    "README.md": "964ad75f752807ff8d58b5885c8923af5e64b2b601ee636888044b21181a5153",
+    "README.md": "d6b3258d6d737752626fe5497a0830967fead5b61e88523cc6650085c3954b1a",
     "THIRD-PARTY-NOTICES.md": "4c25da81e1f183d81943f08a3f0ea461f50afc0ab3e6ecb98cf454cd4af9ba2d",
     "docs/BUILDING.md": "c0205fee7acde913a75f12df93238fe95c25538cd26e16c34a965fe37bce1e83",
     "docs/PUBLISH-GITHUB.md": "222f7fbbddb203ed3afd7e9378816674e45e7e6b7e9f08855b50f664a3e164b0",
@@ -256,7 +256,7 @@
     "forge/src/main/resources/skycraft.client.mixins.json": "3b553003bbf6b6f7ba7aa406431189ec1f7d3d72399629f9090b7cf34f41cfd5",
     "forge/src/main/resources/skycraft.mixins.json": "4f3bc17e1aee49965e12a4708685457fb491860821fc16148d3c14acf7c9d738",
     "forge/tools/MixinTargetAudit.java": "fb48113273840c766698da42e28b1b595abb451eaa1aa8472dbd0f5cc851d1af",
-    "install.md": "289cbd548de792777f06c0ca7e669ea3b4b26d9c2c87e60592aa945d8ffbc80c",
+    "install.md": "8ef3318947f8f36019e965884c5eec8326e79de58ac0ddbdc4cf30fa9206f196",
     "licenses/CommonLibSSE-NG-EXCEPTIONS.md": "649272d176502ce31cd1314810f4b27035bf08417b4f09c6a2971d13ea4a7aba",
     "licenses/CommonLibSSE-NG-GPL-3.0.txt": "f817886ee6bb65ed3098a7987b1e9781653d15c71f85589ce0d2af663c66d373",
     "licenses/CommonLibSSE-NG-LICENSE-MIT.txt": "f8f983d0d1e2bb361f117487465f21f5f4047acca3610f7aba3482d524c83ce4",
@@ -3112,5 +3112,6 @@
     "skse/extern/minhook/src/hde/pstdint.h": "604d1cdf45c5a95bc9cf1bbf39ca05ef83013541101d34971c5cd7577e3d5247",
     "skse/extern/minhook/src/hde/table64.h": "b774446d2f110ce954fb0a710f4693c5562ddbd8d56fe84106f2ee80db8b50a2",
     ".gitattributes": "88dd86a092262c6d9d42acf6b0b59a9c9a17c62ad2e38fa271215caf536624c7"
-  }
+  },
+  "native_dependency_sources": "native-dependencies/"
 }

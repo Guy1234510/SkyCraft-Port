@@ -31,8 +31,8 @@ retain their own authorship and licenses. Treat this as an experimental project.
 
 Release ZIPs contain the chosen Minecraft JAR, the matching native Skyrim plugin,
 license notices and installation guides. Download the Forge or NeoForge package
-for your profile. Matching native source is available in each release's
-`SkyCraft-Corresponding-Source-Native112.zip` asset.
+for your profile. Matching native source and dependency build sources are provided in the
+repository, including the `native-dependencies/` directory.
 
 Compiled files are distributed as Release assets. This source repository excludes
 build output, dependency caches, private notes, logs, saves, account files and

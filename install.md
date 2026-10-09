@@ -12,8 +12,8 @@ This port is **100% vibe-coded**. There will be **no regular project updates**.
 Open your release page and expand **Assets**. Download the ZIP whose name begins
 with `SkyCraft-Forge-1.20.1-68` or `SkyCraft-NeoForge-1.21.1-89`, together with
 its `.zip.sha256` checksum. Extract the ZIP into a temporary folder.
-GitHub's automatic **Source code** downloads and the **Corresponding Source**
-asset are for building the project; they are not the playable installation.
+GitHub's automatic **Source code** downloads are for developers. Compiled
+JAR/DLL files and installation ZIPs are under **Assets**.
 
 Both packages use **Native112 / protocol 17** and include `SkyCraft.dll`.
 Skyrim, Minecraft, launchers, SKSE64, Address Library and optional mods must be
@@ -63,5 +63,5 @@ the ZIP records the hashes of its JAR, DLL, configuration, guides and notices.
 Original SkyCraft: **chasmlol**, [MIT](LICENSE). Port code keeps that license.
 Preserve `LICENSE`, `THIRD-PARTY-NOTICES.md`, `DISTRIBUTION.md` and `licenses/`.
 The native plugin also incorporates CommonLibSSE-NG under GPL-3.0-or-later with
-exceptions. Each release supplies matching corresponding source; see
+exceptions. Matching corresponding source is provided in the repository; see
 [DISTRIBUTION.md](DISTRIBUTION.md) before redistributing the DLL.
