@@ -1,0 +1,8 @@
+[Minecraft]
+; Launch the Forge or NeoForge profile yourself in your preferred launcher.
+bStartWithSkyrim = 0
+sLauncher =
+sArguments =
+
+[Debug]
+bDiagnostics = 0

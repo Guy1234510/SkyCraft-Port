@@ -1,0 +1,115 @@
+plugins {
+	id 'net.neoforged.moddev' version '2.0.107'
+}
+
+version = mod_version
+group = mod_group_id
+base.archivesName = 'skycraft-neoforge'
+
+sourceSets.main.java.srcDirs = [
+	'neoforge/src/main/java',
+	'src/main/java'
+]
+sourceSets.main.java.exclude '**/EntityFluidInteractionMixin.java'
+sourceSets.main.resources.srcDirs = [
+	'neoforge/src/main/resources',
+	'src/main/resources'
+]
+// Assets and data must retain their top-level directory in the packaged JAR.
+// The copied language file at skycraft/lang is superseded by the upstream assets tree.
+sourceSets.main.resources.exclude 'skycraft/**'
+
+def modMetadata = [
+	mod_license: mod_license,
+	mod_id: mod_id,
+	mod_version: mod_version,
+	mod_name: mod_name,
+	mod_authors: mod_authors,
+	mod_description: mod_description
+]
+
+tasks.named('processResources').configure {
+	from('../LICENSE') { rename { 'LICENSE_SkyCraft' } }
+	from('../THIRD-PARTY-NOTICES.md')
+	from('../DISTRIBUTION.md')
+	from('../licenses') { into 'META-INF/skycraft/licenses' }
+	exclude 'fabric.mod.json'
+	from('../fabric/src/main/resources') {
+		include 'assets/**', 'data/**'
+		exclude 'data/skycraft/dimension_type/mirror.json'
+	}
+	inputs.properties(modMetadata)
+	filesMatching('META-INF/neoforge.mods.toml') {
+		expand(modMetadata)
+	}
+}
+
+repositories {
+	maven { url = 'https://maven.su5ed.dev/releases' }
+	maven { url = 'https://api.modrinth.com/maven' }
+}
+
+configurations {
+	mixinAudit
+}
+
+dependencies {
+	implementation "org.sinytra.forgified-fabric-api:forgified-fabric-api:${forgified_fabric_api_version}"
+	implementation 'net.java.dev.jna:jna-platform:5.14.0'
+	implementation 'org.jspecify:jspecify:1.0.0'
+	mixinAudit 'org.ow2.asm:asm-tree:9.7'
+}
+
+neoForge {
+	version = neo_version
+
+	runs {
+		client {
+			client()
+			gameDirectory = project.file('run')
+			jvmArguments.addAll('--enable-native-access=ALL-UNNAMED', '-Dskycraft.quitWithSkyrim=false')
+		}
+		server { server() }
+	}
+
+	mods {
+		skycraft { sourceSet sourceSets.main }
+	}
+}
+
+java {
+	toolchain.languageVersion = JavaLanguageVersion.of(21)
+	withSourcesJar()
+}
+
+tasks.withType(JavaCompile).configureEach {
+	options.encoding = 'UTF-8'
+}
+
+// Compilation alone does not validate Mixin method names or invocation descriptors.
+tasks.register('compileMixinTargetAudit', JavaCompile) {
+	source = files('tools/MixinTargetAudit.java')
+	classpath = configurations.mixinAudit + sourceSets.main.compileClasspath
+	destinationDirectory = layout.buildDirectory.dir('mixinAudit/classes')
+	javaCompiler = javaToolchains.compilerFor { languageVersion = JavaLanguageVersion.of(21) }
+}
+
+tasks.register('verifyMixinTargets', JavaExec) {
+	dependsOn 'classes', 'compileMixinTargetAudit'
+	classpath = configurations.mixinAudit + files(layout.buildDirectory.dir('mixinAudit/classes'))
+	mainClass = 'MixinTargetAudit'
+	javaLauncher = javaToolchains.launcherFor { languageVersion = JavaLanguageVersion.of(21) }
+	args layout.buildDirectory.dir('classes/java/main').get().asFile.absolutePath,
+		layout.buildDirectory.dir('resources/main').get().asFile.absolutePath,
+		layout.buildDirectory.file("moddev/artifacts/neoforge-${neo_version}.jar").get().asFile.absolutePath
+}
+
+tasks.named('check').configure { dependsOn 'verifyMixinTargets' }
+
+// Runs only after a successful build and its Mixin audit.
+tasks.register('packageRelease', Exec) {
+	dependsOn 'assemble', 'check'
+	commandLine providers.environmentVariable('SKYCRAFT_PACK_PYTHON').getOrElse('python'),
+		file('../tools/package_release.py').absolutePath
+}
+tasks.named('build').configure { dependsOn 'packageRelease' }

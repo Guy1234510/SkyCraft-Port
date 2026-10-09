@@ -1,0 +1,21 @@
+modLoader="javafml"
+loaderVersion="[47,)"
+license="MIT"
+[[mods]]
+modId="skycraft"
+version="${mod_version}"
+displayName="SkyCraft"
+authors="chasmlol"
+description='''Play Skyrim with Minecraft physics, inventory and viewmodels.'''
+[[dependencies.skycraft]]
+modId="forge"
+mandatory=true
+versionRange="[47.4.10,48)"
+ordering="NONE"
+side="BOTH"
+[[dependencies.skycraft]]
+modId="minecraft"
+mandatory=true
+versionRange="[1.20.1,1.20.2)"
+ordering="NONE"
+side="BOTH"

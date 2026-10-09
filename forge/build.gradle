@@ -1,0 +1,87 @@
+plugins {
+	id 'net.neoforged.moddev.legacyforge' version '2.0.107'
+}
+version = mod_version
+group = 'dev.skycraft'
+base.archivesName = 'skycraft-forge'
+
+repositories { mavenCentral() }
+configurations { mixinAudit }
+dependencies {
+	implementation 'net.java.dev.jna:jna-platform:5.13.0'
+	compileOnly 'org.jspecify:jspecify:1.0.0'
+	implementation 'io.github.llamalad7:mixinextras-forge:0.5.3'
+	compileOnly 'io.github.llamalad7:mixinextras-common:0.5.3'
+	jarJar('io.github.llamalad7:mixinextras-forge:0.5.3') { version { strictly '[0.5.3,0.6)'; prefer '0.5.3' } }
+	annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+	annotationProcessor 'io.github.llamalad7:mixinextras-common:0.5.3'
+	mixinAudit 'org.ow2.asm:asm-tree:9.7'
+}
+
+legacyForge {
+	version = forge_version
+	runs {
+		client {
+			client()
+			gameDirectory = project.file('run')
+			jvmArguments.add('-Dskycraft.quitWithSkyrim=false')
+		}
+		server { server() }
+	}
+	mods { skycraft { sourceSet sourceSets.main } }
+}
+
+java {
+	toolchain.languageVersion = JavaLanguageVersion.of(17)
+	withSourcesJar()
+}
+tasks.withType(JavaCompile).configureEach { options.encoding = 'UTF-8' }
+sourceSets.main.java.exclude '**/EntityFluidInteractionMixin.java'
+sourceSets.main.java.exclude '**/ProjectileMixin.java'
+tasks.withType(JavaCompile).configureEach { options.compilerArgs.addAll('-Xmaxerrs', '300') }
+def modMetadata = [mod_version: mod_version]
+tasks.named('processResources').configure {
+	from('../LICENSE') { rename { 'LICENSE_SkyCraft' } }
+	from('../THIRD-PARTY-NOTICES.md')
+	from('../DISTRIBUTION.md')
+	from('../licenses') { into 'META-INF/skycraft/licenses' }
+	from('../fabric/src/main/resources') {
+		include 'assets/**', 'data/**'
+		exclude 'data/skycraft/dimension_type/mirror.json'
+	}
+	inputs.properties(modMetadata)
+	filesMatching('META-INF/mods.toml') { expand(modMetadata) }
+}
+mixin {
+	add sourceSets.main, 'skycraft.refmap.json'
+	config 'skycraft.mixins.json'
+	config 'skycraft.client.mixins.json'
+}
+tasks.named('jar').configure {
+	manifest.attributes('MixinConfigs': 'skycraft.mixins.json,skycraft.client.mixins.json')
+}
+
+tasks.register('compileMixinTargetAudit', JavaCompile) {
+	source = files('tools/MixinTargetAudit.java')
+	classpath = configurations.mixinAudit + sourceSets.main.compileClasspath
+	destinationDirectory = layout.buildDirectory.dir('mixinAudit/classes')
+	javaCompiler = javaToolchains.compilerFor { languageVersion = JavaLanguageVersion.of(17) }
+}
+tasks.register('verifyMixinTargets', JavaExec) {
+	dependsOn 'classes', 'compileMixinTargetAudit'
+	classpath = configurations.mixinAudit + files(layout.buildDirectory.dir('mixinAudit/classes'))
+	mainClass = 'MixinTargetAudit'
+	javaLauncher = javaToolchains.launcherFor { languageVersion = JavaLanguageVersion.of(17) }
+	args layout.buildDirectory.dir('classes/java/main').get().asFile.absolutePath,
+		layout.buildDirectory.dir('resources/main').get().asFile.absolutePath,
+		layout.buildDirectory.file("moddev/artifacts/forge-${forge_version}.jar").get().asFile.absolutePath
+}
+tasks.named('check').configure { dependsOn 'verifyMixinTargets' }
+
+// Runs only after a successful build and its Mixin audit.
+tasks.register('packageRelease', Exec) {
+	dependsOn 'assemble', 'check'
+	commandLine providers.environmentVariable('SKYCRAFT_PACK_PYTHON').getOrElse('python'),
+		file('../tools/package_release.py').absolutePath
+}
+tasks.named('build').configure { dependsOn 'packageRelease' }
